@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import UploadExcel from './components/UploadExcel';
+import RutasPage from './pages/RutasPage';
 
 const COLUMNS = [
   { key: 'sicm', label: 'SICM' },
@@ -25,6 +26,7 @@ const COLUMNS = [
 ];
 
 export default function App() {
+  const [tab, setTab] = useState('auditoria');
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [syncing, setSyncing] = useState(false);
@@ -66,6 +68,25 @@ export default function App() {
   return (
     <div style={styles.root}>
       <h1 style={styles.heading}>Sistema de Auditoría</h1>
+      <div style={styles.tabs}>
+        <button
+          onClick={() => setTab('auditoria')}
+          style={{ ...styles.tab, ...(tab === 'auditoria' ? styles.tabActive : {}) }}
+        >
+          Auditoría Farmacias
+        </button>
+        <button
+          onClick={() => setTab('rutas')}
+          style={{ ...styles.tab, ...(tab === 'rutas' ? styles.tabActiveRutas : {}) }}
+        >
+          Rutas
+        </button>
+      </div>
+
+      {tab === 'rutas' ? (
+        <RutasPage />
+      ) : (
+        <>
       <UploadExcel onSuccess={fetchData} />
       <div style={styles.syncBar}>
         <button onClick={syncProfit} disabled={syncing} style={styles.syncBtn}>
@@ -104,12 +125,18 @@ export default function App() {
           </table>
         )}
       </div>
+        </>
+      )}
     </div>
   );
 }
 
 const styles = {
   root: { fontFamily: 'system-ui, sans-serif', padding: '2rem', background: '#f1f5f9', minHeight: '100vh' },
+  tabs: { display: 'flex', gap: '0.5rem', maxWidth: 480, margin: '0 auto 2rem', justifyContent: 'center' },
+  tab: { padding: '0.5rem 1.5rem', border: '2px solid #cbd5e1', borderRadius: 6, cursor: 'pointer', background: '#fff', fontWeight: 600, color: '#475569' },
+  tabActive: { background: '#2563eb', color: '#fff', border: '2px solid #2563eb' },
+  tabActiveRutas: { background: '#7c3aed', color: '#fff', border: '2px solid #7c3aed' },
   syncBar: { display: 'flex', alignItems: 'center', gap: '1rem', maxWidth: 480, margin: '0 auto 2rem' },
   syncBtn: { padding: '0.5rem 1.25rem', background: '#0f766e', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer', fontWeight: 600 },
   heading: { textAlign: 'center', marginBottom: '2rem', color: '#1e293b' },
